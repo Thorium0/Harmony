@@ -1,0 +1,22 @@
+{% extends "main/base.html.django" %}
+{% block content %}
+
+<div id="sideNav" class="sidenav">
+  <a href="">1</a>
+  <a href="">2</a>
+  <a href="">3</a>
+</div>
+
+  <main role="main" class="container">
+    <div class="row" id="winbox">
+      <div class="col-md-12">
+        <h1>{{ title }}</h1>
+
+
+        
+
+        
+      </div>
+      </div>
+  </main>
+{% endblock content %}
