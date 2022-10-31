@@ -2,21 +2,27 @@
 {% block content %}
 
 <div id="sideNav" class="sidenav">
-  <a href="">1</a>
-  <a href="">2</a>
-  <a href="">3</a>
+  <h2>{{ title }}</h2>
+  <a class="row add_friend" href="{% url 'add_friend' %}">+ Add Friend +</a>
+  {% for request in requests %}
+  <p class="row flex-container "><img class="navImg ml-4 nav-item rounded-circle mr-0" src="{{ request.sender.profile.image.url }}"/><b class="sidenav_username">{{ request.sender }}</b><a href="{% url 'finalize_friend' request.id %}">&#10004;</a><a href="{% url 'remove_friend_request' request.id %}">&#10060;</a></p>
+  {% endfor %}
+  {% for friend in friends %}
+  <a href="" class="row"><img class="navImg ml-4 nav-item rounded-circle mr-0" src="{{ friend.profile.image.url }}"/><b class="sidenav_username">{{ friend.username }}</b></a>
+  {% endfor %}
+  
 </div>
 
-  <main role="main" class="container">
+  <div class="content content-section">
     <div class="row" id="winbox">
       <div class="col-md-12">
-        <h1>{{ title }}</h1>
-
-
         
+
+        sdfsdf
 
         
       </div>
       </div>
-  </main>
+
+    </div>
 {% endblock content %}

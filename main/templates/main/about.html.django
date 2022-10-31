@@ -1,6 +1,6 @@
 {% extends "main/base.html.django" %}
 {% block content %}
-  <main role="main" class="container">
+  <div class="content">
     <div class="row">
       <div class="col-md-8">
         <article class="media content-section">
@@ -14,5 +14,5 @@
         </article>
       </div>
       </div>
-  </main>
+    </div>
 {% endblock content %}

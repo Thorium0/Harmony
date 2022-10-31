@@ -21,7 +21,7 @@ def register(request):
             UserLogin(request, user)
             messages.success(request, f'Account "{username}" Created Successfully!')
             try: next_page = request.GET['next']
-            except: return redirect('home')
+            except: return redirect('friends')
             else: return HttpResponseRedirect(next_page)
 
     else:
@@ -43,7 +43,7 @@ def login(request):
             user = User.objects.get(username=username)
             UserLogin(request, user)
             try: next_page = request.GET['next']
-            except: return redirect('home')
+            except: return redirect('friends')
             else: return HttpResponseRedirect(next_page)
 
     else:
@@ -59,7 +59,7 @@ def login(request):
 @login_required
 def logout(request):
     DjangoLogout(request)
-    return redirect("home")
+    return redirect("friends")
 
 
 @login_required
