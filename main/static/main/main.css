@@ -138,10 +138,22 @@ a.article-title:hover {
 }
 .content {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 0;
   margin: -25px 0 0 -25px; /* Apply negative top and left margins to truly center the element */
+  
 }
+
+#content {
+  width: 70vw;
+}
+
+html {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+
+
 .message {
   position: absolute;
   top: 50%;
@@ -157,18 +169,10 @@ a.article-title:hover {
   padding-right: 8px;
 }
 
-.sidenav .closebtn {
-  position: absolute;
-  top: 0;
-  right: 25px;
-  font-size: 36px;
-  margin-left: 50px;
-}
-
 /* The side navigation menu */
 .sidenav {
   height: 100%; /* 100% Full-height */
-  width: fit-content; /* 0 width - change this with JavaScript */
+  width: 250px; /* 0 width - change this with JavaScript */
   position: fixed; /* Stay in place */
   top: 0; /* Stay at the top */
   left: 0;
@@ -176,6 +180,8 @@ a.article-title:hover {
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
   transition: 0.5s;
+  z-index: 1;
+  padding-top: 60px;
 }
 
 .sidenav h1, h2, h3 {
@@ -212,5 +218,23 @@ a.article-title:hover {
 
 #main {
   transition: margin-left .5s;
-  padding: 16px;
+  padding: 25px;
+  margin-left: 250px;
+}
+
+.fill-page {
+  height: 85vh;
+  
+}
+
+.content-container {
+  margin-left: 25px;
+  width: 100%;
+}
+
+
+.msgBox {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }

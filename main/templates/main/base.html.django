@@ -71,7 +71,7 @@
     </div>
   </nav>
 </header>
-<main role="main" class="container">
+<main role="main" class="container" id="main">
   <div class="col-md-8 message">
     {% if messages %}
       {% for message in messages %}

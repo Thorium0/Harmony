@@ -42,6 +42,15 @@ def friends(request):
         friends.append(friend.user_2)
     for friend in Friend.objects.filter(user_2=request.user):
         friends.append(friend.user_1)
+
+
+
+    if request.method == 'POST':
+        pass
+    else:
+        pass
+
+    
     context = {
     "title" : "Friends",
     "requests": friend_requests,

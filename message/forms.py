@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Friend_request
+from .models import Friend_request, Message
 
 
 class FriendRequestForm(forms.ModelForm):
@@ -9,3 +9,9 @@ class FriendRequestForm(forms.ModelForm):
     class Meta:
         model = Friend_request
         fields = ['username']
+
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['text']
