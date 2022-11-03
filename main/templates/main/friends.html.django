@@ -2,21 +2,26 @@
 {% block content %}
 
 <div id="sideNav" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <h2>{{ title }}</h2>
   <a class="row add_friend" href="{% url 'add_friend' %}">+ Add Friend +</a>
+  <div id="request_container">
   {% for request in requests %}
-  <p class="row flex-container "><img class="navImg ml-4 nav-item rounded-circle mr-0" src="{{ request.sender.profile.image.url }}"/><b class="sidenav_username">{{ request.sender }}</b><a href="{% url 'finalize_friend' request.id %}">&#10004;</a><a href="{% url 'remove_friend_request' request.id %}">&#10060;</a></p>
+  <p class="row flex-container "><img class="navImg nav-item rounded-circle mr-0" src="{{ request.requester.profile.image.url }}"/><b class="sidenav_username">{{ request.requester.username }}</b><a href="{% url 'finalize_friend' request.id %}">&#10004;</a><a href="{% url 'remove_friend_request' request.id %}">&#10060;</a></p>
   {% endfor %}
+  </div>
+  <div id="friend_container">
   {% for friend in friends %}
-  <a href="" class="row"><img class="navImg ml-4 nav-item rounded-circle mr-0" src="{{ friend.profile.image.url }}"/><b class="sidenav_username">{{ friend.username }}</b></a>
+  <a href="" class="row"><img class="navImg nav-item rounded-circle mr-0" src="{{ friend.profile.image.url }}"/><b class="sidenav_username">{{ friend.username }}</b></a>
   {% endfor %}
+  </div>
   
 </div>
 
   <div class="content content-section">
     <div class="row" id="winbox">
       <div class="col-md-12">
-        
+        <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>
 
         sdfsdf
 
@@ -25,4 +30,60 @@
       </div>
 
     </div>
+
+    <script type="text/javascript">
+      function openNav() {
+        document.getElementById("sideNav").style.width = "250px";
+        document.getElementById("main").style.marginLeft = "250px";
+      }
+      
+      function closeNav() {
+        document.getElementById("sideNav").style.width = "0";
+        document.getElementById("main").style.marginLeft= "0";
+      }
+
+      var loaded_on = "";
+
+      $(document).ready(function() {
+        window.setTimeout(start_timer, 2000);
+      });
+
+      function start_timer() {
+        loaded_on = moment().format("YYYY-MM-DD_HH:mm:ss");
+        window.setInterval(async_refresh, 2000);
+      }
+
+      function async_refresh() {
+        $.ajax({url: "update/"+loaded_on, success: function(result) {
+          change_time = false;
+          if (result["friend_requests"].length > 0) {
+            result["friend_requests"].forEach(request => {
+              var container = $("#request_container");
+              var html = '<p class="row flex-container "><img class="navImg nav-item rounded-circle mr-0" src="'+request["image_url"]+'"/><b class="sidenav_username">'+request["username"]+'</b><a href="/friend/finalize/'+request["request_id"]+'">&#10004;</a><a href="/friend/remove_request/'+request["request_id"]+'">&#10060;</a></p>';
+              container.append(html);
+            });
+            change_time = true;
+          }
+          if (result["friends"].length > 0) {
+            result["friends"].forEach(friend => {
+              var container = $("#friend_container");
+              var html = '<a href="" class="row"><img class="navImg nav-item rounded-circle mr-0" src="'+friend["image_url"]+'"/><b class="sidenav_username">'+friend["username"]+'</b></a>';
+              container.append(html);
+            change_time = true;
+          });
+        }
+          if (result["messages"].length > 0) {
+            console.log("message");
+            change_time = true;
+          }
+
+          if (change_time == true) {
+            loaded_on = moment().format("YYYY-MM-DD_hh:mm:ss");
+          }
+
+        }});
+      }
+
+
+    </script>
 {% endblock content %}

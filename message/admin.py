@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import Message, Friend, Friend_request
+from .models import Message, Friend, Friend_request, Conversation
 
-admin.site.register([Message, Friend, Friend_request])
+admin.site.register([Conversation, Message, Friend, Friend_request])

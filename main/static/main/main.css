@@ -126,6 +126,7 @@ a.article-title:hover {
 
 .account-heading {
   font-size: 2.5rem;
+  text-align: left;
 }
 
 .flex-container {
@@ -156,6 +157,14 @@ a.article-title:hover {
   padding-right: 8px;
 }
 
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
 /* The side navigation menu */
 .sidenav {
   height: 100%; /* 100% Full-height */
@@ -166,6 +175,7 @@ a.article-title:hover {
   background-color: #111; /* Black*/
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
+  transition: 0.5s;
 }
 
 .sidenav h1, h2, h3 {
@@ -198,4 +208,9 @@ a.article-title:hover {
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
+}
+
+#main {
+  transition: margin-left .5s;
+  padding: 16px;
 }
