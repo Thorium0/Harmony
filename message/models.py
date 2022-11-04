@@ -14,8 +14,10 @@ class Friend_request(models.Model):
     sent_on = models.DateTimeField(auto_now=True)
     
 
+
 class Conversation(models.Model):
     of_friends = models.ForeignKey(Friend, on_delete=models.CASCADE)
+
 
 
 class Message(models.Model):

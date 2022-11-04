@@ -45,7 +45,7 @@ ul {
   margin-left:65vw;
   left:0;
   width: 250px;
-  z-index: 90;
+  z-index: 5;
 }
 
 
@@ -58,7 +58,7 @@ ul {
 
 .site-header {
   position: fixed;
-  z-index: 100;
+  z-index: 10;
 }
 
 .site-header .navbar-nav .nav-link {
@@ -152,15 +152,13 @@ html {
   overflow-y: hidden;
 }
 
-
-
 .message {
-  position: absolute;
-  top: 50%;
-  left: 50%;
+  position: fixed;
+  top: 100px;
+  left: 40%;
   width: fit-content;
   margin: -25px 0 0 -25px; /* Apply negative top and left margins to truly center the element */
-  z-index: 5;
+  z-index: 15;
   opacity: 0.9;
 }
 
@@ -172,16 +170,20 @@ html {
 /* The side navigation menu */
 .sidenav {
   height: 100%; /* 100% Full-height */
-  width: 250px; /* 0 width - change this with JavaScript */
+  width: 300px; /* 0 width - change this with JavaScript */
   position: fixed; /* Stay in place */
   top: 0; /* Stay at the top */
   left: 0;
   background-color: #111; /* Black*/
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
-  transition: 0.5s;
+
   z-index: 1;
   padding-top: 60px;
+}
+
+.sidenav-transition {
+  transition: 0.5s;
 }
 
 .sidenav h1, h2, h3 {
@@ -216,11 +218,7 @@ html {
   .sidenav a {font-size: 18px;}
 }
 
-#main {
-  transition: margin-left .5s;
-  padding: 25px;
-  margin-left: 250px;
-}
+
 
 .fill-page {
   height: 85vh;
@@ -235,6 +233,14 @@ html {
 
 .msgBox {
   position: absolute;
-  bottom: 0;
   width: 100%;
+  bottom: 0;
+
+}
+
+
+
+.message_container {
+  overflow-y: scroll;
+  height: calc(100% - 200px);
 }

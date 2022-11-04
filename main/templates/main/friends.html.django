@@ -1,7 +1,6 @@
 {% extends "main/base.html.django" %}
 {% block content %}
 {% load crispy_forms_tags %}
-
 <div id="sideNav" class="sidenav">
   <h2>{{ title }}</h2>
   <a class="row add_friend" href="{% url 'add_friend' %}">+ Add Friend +</a>
@@ -12,59 +11,10 @@
   </div>
   <div id="friend_container">
   {% for friend in friends %}
-  <a href="" class="row"><img class="navImg nav-item rounded-circle mr-0" src="{{ friend.profile.image.url }}"/><b class="sidenav_username">{{ friend.username }}</b></a>
+  <a href="{% url 'friend_select' friend.id %}" class="row"><img class="navImg nav-item rounded-circle mr-0" src="{{ friend.profile.image.url }}"/><b class="sidenav_username">{{ friend.username }}</b></a>
   {% endfor %}
   </div>
-  
-</div>
-<div class="content-container" class="fill-page" >
-  <div id="content" class="content content-section fill-page">
-    <span style="font-size:30px;cursor:pointer" onclick="toggleNav()">&#9776;</span>
-    <div class="message-container">
-     
-
-    </div>
-    <div class="msgBox">
-    <form method="POST">
-      {% csrf_token %}
-      <fieldset class="form-group">
-        {{ form|crispy }}
-      </fieldset>
-      <div class="form-group">
-        <button class="btn btn-outline-info" type="submit">Send friend request</button>
-      </div>
-    </div>
-    </form>
-
-    </div>
-  </div>
-
     <script type="text/javascript">
-
-      var nav_open = true;
-
-
-      function toggleNav() {
-        if (nav_open) {
-          closeNav();
-          nav_open = false;
-        } else {
-          openNav();
-          nav_open = true;
-        }
-      }
-
-      function openNav() {
-        document.getElementById("sideNav").style.width = "250px";
-        document.getElementById("main").style.marginLeft = "250px";
-        document.getElementById("content").style.width = "70vw";
-      }
-      
-      function closeNav() {
-        document.getElementById("sideNav").style.width = "0";
-        document.getElementById("main").style.marginLeft= "0";
-        document.getElementById("content").style.width = "85vw";
-      }
 
       var loaded_on = "";
 
@@ -78,7 +28,7 @@
       }
 
       function async_refresh() {
-        $.ajax({url: "update/"+loaded_on, success: function(result) {
+        $.ajax({url: "update/"+loaded_on+"/0", success: function(result) {
           change_time = false;
           if (result["friend_requests"].length > 0) {
             result["friend_requests"].forEach(request => {

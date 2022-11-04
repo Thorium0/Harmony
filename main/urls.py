@@ -3,5 +3,6 @@ from . import views
 
 urlpatterns = [
     path('', views.friends, name='friends'),
-    path("update/<str:loaded_on>", views.update, name="update")
+    path('<int:user_id>', views.friend_select, name='friend_select'),
+    path("update/<str:loaded_on>/<int:user_id>", views.update, name="update")
 ]

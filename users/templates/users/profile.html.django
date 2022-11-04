@@ -19,7 +19,6 @@
       <div class="form-group">
         <button class="btn btn-outline-info" type="submit">Update</button>
         <button type="button" class="btn btn-outline-info" onclick="window.location.href = '{% url 'changePassword' %}'">Change Password</button>
-        <button type="button" class="btn btn-outline-info" onclick="window.location.href = '{% url 'friends' %}'">Cancel</button>
       </div>
     </form>
   </div>
