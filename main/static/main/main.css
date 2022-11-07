@@ -138,13 +138,14 @@ a.article-title:hover {
 }
 .content {
   position: absolute;
-  top: 0;
+  top: 20px;
   margin: -25px 0 0 -25px; /* Apply negative top and left margins to truly center the element */
-  
+  transition: 0.5s;
 }
 
 #content {
-  width: 70vw;
+  width: calc(100vw - 350px);
+  height: calc(100vh - 130px);
 }
 
 html {
@@ -238,9 +239,22 @@ html {
 
 }
 
-
+#id_text {
+width: calc(100% - 30px);
+}
 
 .message_container {
   overflow-y: scroll;
   height: calc(100% - 200px);
+  background-color: #1b1b1b;
+  border-radius: 20px;
+}
+
+.message-div {
+  margin: 10px;
+}
+
+.chatbox-user {
+  margin-left: calc(50% - 50px);
+  vertical-align: top;
 }

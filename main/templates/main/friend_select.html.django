@@ -19,9 +19,13 @@
 <div class="content-container" class="fill-page" >
   <div id="content" class="content content-section fill-page">
     <span style="font-size:30px;cursor:pointer" onclick="toggleNav()">&#9776;</span>
+    <span class="chatbox-user">
+    <img class="navImg nav-item rounded-circle mr-0" src="{{ user_info.image_url }}"/>
+    {{ user_info.username }}
+    </span>
     <div class="message_container" id="message_container">
         {% for message in text_messages %}
-        <div>
+        <div class="message-div">
         <img class="navImg nav-item rounded-circle mr-0" src="{{ message.sender.profile.image.url }}"/>
           {{message.sender.username}}:
           {{message.text}}
@@ -63,19 +67,20 @@
       function openNav() {
         document.getElementById("sideNav").style.width = "300px";
         document.getElementById("main").style.marginLeft = "300px";
-        document.getElementById("content").style.width = "70vw";
+        document.getElementById("content").style.width = "calc(100vw - 350px)";
       }
       
       function closeNav() {
         document.getElementById("sideNav").style.width = "0";
         document.getElementById("main").style.marginLeft= "0";
-        document.getElementById("content").style.width = "85vw";
+        document.getElementById("content").style.width = "calc(100vw - 50px)";
       }
 
       var loaded_on = "";
 
       $(document).ready(function() {
-        window.setTimeout(start_timer, 2000);
+        loaded_on = moment("{{ loaded_on }}").format("YYYY-MM-DD_HH:mm:ss.SSS");
+        start_timer()
 
         var main = $("#main");
         main.css({
@@ -95,8 +100,6 @@
                 sideNav.classList.remove("sidenav-transition");
                 closeNav();
                 window.setTimeout(readdClass, 500);
-                
-                
             }
             
         } catch (error) {
@@ -106,6 +109,11 @@
 
         var message_container = document.getElementById("message_container");
         message_container.scrollTop = message_container.scrollHeight;
+
+
+        var input = document.getElementById("id_text");
+        input.focus();
+        input.select();
         
 
 
@@ -117,9 +125,10 @@
       }
 
       function start_timer() {
-        loaded_on = moment().format("YYYY-MM-DD_HH:mm:ss");
         window.setInterval(async_refresh, 2000);
       }
+
+      seconds = 0;
 
       function async_refresh() {
         var user_id = {{ user_id }};
@@ -140,12 +149,12 @@
               container.append(html);
             });
             change_time = true;
-        }
+          }
           if (result["messages"].length > 0) {
             console.log(result["messages"]);
             result["messages"].forEach(message => {
                 var container = $("#message_container");
-                var html = '<div> <img class="navImg nav-item rounded-circle mr-0" src="'+message["image_url"]+'"/> '+message["username"]+': '+message["message_text"]+' </div>';
+                var html = '<div class="message-div"> <img class="navImg nav-item rounded-circle mr-0" src="'+message["image_url"]+'"/> '+message["username"]+': '+message["message_text"]+' </div>';
                 container.append(html);
             });
             change_time = true;
@@ -155,7 +164,7 @@
           }
 
           if (change_time == true) {
-            loaded_on = moment().format("YYYY-MM-DD_hh:mm:ss");
+            loaded_on = moment(result["new_time"]).format("YYYY-MM-DD_HH:mm:ss.SSS");
           }
 
         }});

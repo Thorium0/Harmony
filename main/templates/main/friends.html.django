@@ -19,11 +19,11 @@
       var loaded_on = "";
 
       $(document).ready(function() {
-        window.setTimeout(start_timer, 2000);
+        loaded_on = moment("{{ loaded_on }}").format("YYYY-MM-DD_HH:mm:ss.SSS");
+        start_timer();
       });
 
       function start_timer() {
-        loaded_on = moment().format("YYYY-MM-DD_HH:mm:ss");
         window.setInterval(async_refresh, 2000);
       }
 
@@ -43,21 +43,16 @@
               var container = $("#friend_container");
               var html = '<a href="" class="row"><img class="navImg nav-item rounded-circle mr-0" src="'+friend["image_url"]+'"/><b class="sidenav_username">'+friend["username"]+'</b></a>';
               container.append(html);
-            change_time = true;
-          });
-        }
-          if (result["messages"].length > 0) {
-            console.log("message");
+            });
             change_time = true;
           }
 
           if (change_time == true) {
-            loaded_on = moment().format("YYYY-MM-DD_hh:mm:ss");
+            loaded_on = moment(result["new_time"]).format("YYYY-MM-DD_HH:mm:ss.SSS");
           }
-
+        
         }});
       }
-
 
     </script>
 {% endblock content %}

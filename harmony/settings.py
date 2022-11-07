@@ -84,8 +84,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'harmony',
-        'USER': 'root',
-        'PASSWORD': '',
+        'USER': keys.username,
+        'PASSWORD': keys.password,
         'HOST': '127.0.0.1',
         'PORT': '3306'
     }

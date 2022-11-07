@@ -11,25 +11,26 @@ import datetime
 
 
 def getMessagesFromUser(request, friend_user, time=False):
+    text_messages = []
     try: friend_link = Friend.objects.get(user_1=request.user, user_2=friend_user)
     except: friend_link = Friend.objects.get(user_2=request.user, user_1=friend_user)
-
-    form = MessageForm()
     try: conversation = Conversation.objects.get(of_friends=friend_link)
-    except: pass
+    except: 
+        Conversation.objects.create(of_friends=friend_link)
+        conversation = Conversation.objects.get(of_friends=friend_link)
     else:
         if time:
-            messages = Message.objects.filter(conversation=conversation, sent_on__gt=time)
+            text_messages = Message.objects.filter(conversation=conversation, sent_on__gt=time)
         else:
-            messages = Message.objects.filter(conversation=conversation)
-    return messages
+            text_messages = Message.objects.filter(conversation=conversation)
+    return text_messages
     
 
 
 @login_required
 def update(request, loaded_on, user_id):
     data = {}
-    time = datetime.datetime.strptime(loaded_on, '%Y-%m-%d_%H:%M:%S')
+    time = datetime.datetime.strptime(loaded_on, "%Y-%m-%d_%H:%M:%S.%f")
 
     friends = []
     for friend in Friend.objects.filter(user_1=request.user, created_on__gt=time):
@@ -52,7 +53,7 @@ def update(request, loaded_on, user_id):
             message_list.append({"username": friend_user.username, "image_url": friend_user.profile.image.url, "message_text": message.text})
     
     data["messages"] = message_list
-    
+    data["new_time"] = str(datetime.datetime.now())
     return JsonResponse(data)
 
 
@@ -65,11 +66,15 @@ def friends(request):
         friends.append(friend.user_2)
     for friend in Friend.objects.filter(user_2=request.user):
         friends.append(friend.user_1)
+
+
+    loaded_on = datetime.datetime.now()
     
     context = {
     "title" : "Friends",
     "requests": friend_requests,
-    "friends": friends
+    "friends": friends,
+    "loaded_on": str(loaded_on)
     }
     return render(request, 'main/friends.html.django', context)
 
@@ -86,7 +91,7 @@ def friend_select(request, user_id):
         friends.append(friend.user_1)
 
     
-    messages = []
+    text_messages = []
 
     if request.method == 'POST':
         form = MessageForm(request.POST)
@@ -112,14 +117,24 @@ def friend_select(request, user_id):
     else:
         form = MessageForm()
         friend_user = User.objects.get(id=user_id)
-        messages = getMessagesFromUser(request, friend_user)
+        text_messages = getMessagesFromUser(request, friend_user)
+
+
+    loaded_on = datetime.datetime.now()
+    user_info = {}
+    friend_user = User.objects.get(id=user_id)
+    user_info["username"] = friend_user.username
+    user_info["image_url"] = friend_user.profile.image.url
+
     
     context = {
     "title" : "Friends",
     "requests": friend_requests,
     "friends": friends,
     "form": form,
-    "text_messages": messages,
-    "user_id": user_id
+    "text_messages": text_messages,
+    "user_id": user_id,
+    "user_info": user_info,
+    "loaded_on": str(loaded_on)
     }
     return render(request, 'main/friend_select.html.django', context)

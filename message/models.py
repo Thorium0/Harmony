@@ -16,7 +16,7 @@ class Friend_request(models.Model):
 
 
 class Conversation(models.Model):
-    of_friends = models.ForeignKey(Friend, on_delete=models.CASCADE)
+    of_friends = models.OneToOneField(Friend, on_delete=models.CASCADE)
 
 
 
