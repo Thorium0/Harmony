@@ -6,7 +6,7 @@ from message.models import Friend_request, Friend, Message, Conversation
 from message.forms import MessageForm
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-import datetime
+import datetime, sys
 
 
 
@@ -34,9 +34,9 @@ def update(request, loaded_on, user_id):
 
     friends = []
     for friend in Friend.objects.filter(user_1=request.user, created_on__gt=time):
-        friends.append({"conv_id": friend.id, "username":friend.user_2.username, "image_url": friend.user_2.profile.image.url})
+        friends.append({"user_id": friend.user_2.id, "username":friend.user_2.username, "image_url": friend.user_2.profile.image.url})
     for friend in Friend.objects.filter(user_2=request.user, created_on__gt=time):
-        friends.append({"id": friend.id, "username":friend.user_1.username, "image_url": friend.user_1.profile.image.url})
+        friends.append({"user_id": friend.user_1.id, "username":friend.user_1.username, "image_url": friend.user_1.profile.image.url})
     data["friends"] = friends
         
     friend_requests = Friend_request.objects.filter(requested=request.user, sent_on__gt=time)
@@ -50,7 +50,7 @@ def update(request, loaded_on, user_id):
         friend_user = User.objects.get(id=user_id)
         messages = getMessagesFromUser(request, friend_user, time=loaded_on)
         for message in messages:
-            message_list.append({"username": friend_user.username, "image_url": friend_user.profile.image.url, "message_text": message.text})
+            message_list.append({"username": friend_user.username, "image_url": friend_user.profile.image.url, "message_text": message.text, "sent_on": message.sent_on})
     
     data["messages"] = message_list
     data["new_time"] = str(datetime.datetime.now())
@@ -118,6 +118,11 @@ def friend_select(request, user_id):
         form = MessageForm()
         friend_user = User.objects.get(id=user_id)
         text_messages = getMessagesFromUser(request, friend_user)
+        for msg in text_messages:
+            if 'win' in sys.platform:
+                msg.sent_on = msg.sent_on.strftime("%b %#dth %Y, %H:%M:%S")
+            else:
+                msg.sent_on = msg.sent_on.strftime("%b %-dth %Y, %H:%M:%S")
 
 
     loaded_on = datetime.datetime.now()

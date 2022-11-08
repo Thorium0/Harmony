@@ -27,7 +27,8 @@
         {% for message in text_messages %}
         <div class="message-div">
         <img class="navImg nav-item rounded-circle mr-0" src="{{ message.sender.profile.image.url }}"/>
-          {{message.sender.username}}:
+          [{{message.sent_on}}]
+          ({{message.sender.username}}):
           {{message.text}}
         </div>
         {% endfor %}
@@ -52,14 +53,11 @@
 
 
       function toggleNav() {
-        console.log(sessionStorage.getItem("nav_open") ==1);
         if (sessionStorage.getItem("nav_open") == 1) {
           closeNav();
           sessionStorage.setItem("nav_open", 0)
-          nav_open = false;
         } else {
           openNav();
-          nav_open = true;
           sessionStorage.setItem("nav_open", 1)
         }
       }
@@ -93,17 +91,18 @@
         textBox.val('');
 
 
-        try {
-            var nav_open = sessionStorage.getItem("nav_open");
+   
+        var nav_open = sessionStorage.getItem("nav_open");
+        if (nav_open != null) {
             if (nav_open == 0) {
                 var sideNav = document.getElementById("sideNav");
                 sideNav.classList.remove("sidenav-transition");
                 closeNav();
                 window.setTimeout(readdClass, 500);
             }
-            
-        } catch (error) {
-            sessionStorage.setItem("nav_open", 0);
+    
+        } else {
+            sessionStorage.setItem("nav_open", 1);
         }
 
 
@@ -114,7 +113,6 @@
         var input = document.getElementById("id_text");
         input.focus();
         input.select();
-        
 
 
       });
@@ -145,7 +143,7 @@
           if (result["friends"].length > 0) {
             result["friends"].forEach(friend => {
               var container = $("#friend_container");
-              var html = '<a href="" class="row"><img class="navImg nav-item rounded-circle mr-0" src="'+friend["image_url"]+'"/><b class="sidenav_username">'+friend["username"]+'</b></a>';
+              var html = '<a href="/'+friend["user_id"]+'" class="row"><img class="navImg nav-item rounded-circle mr-0" src="'+friend["image_url"]+'"/><b class="sidenav_username">'+friend["username"]+'</b></a>';
               container.append(html);
             });
             change_time = true;
@@ -154,7 +152,7 @@
             console.log(result["messages"]);
             result["messages"].forEach(message => {
                 var container = $("#message_container");
-                var html = '<div class="message-div"> <img class="navImg nav-item rounded-circle mr-0" src="'+message["image_url"]+'"/> '+message["username"]+': '+message["message_text"]+' </div>';
+                var html = '<div class="message-div"> <img class="navImg nav-item rounded-circle mr-0" src="'+message["image_url"]+'"/> '+ '['+moment(message["sent_on"]).format('MMM Do YYYY, HH:mm:ss')+'] (' + message["username"]+'): '+message["message_text"]+' </div>';
                 container.append(html);
             });
             change_time = true;
