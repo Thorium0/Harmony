@@ -140,7 +140,6 @@ a.article-title:hover {
   position: absolute;
   top: 20px;
   margin: -25px 0 0 -25px; /* Apply negative top and left margins to truly center the element */
-  transition: 0.5s;
 }
 
 #content {
@@ -183,7 +182,7 @@ html {
   padding-top: 60px;
 }
 
-.sidenav-transition {
+.transition {
   transition: 0.5s;
 }
 
@@ -236,7 +235,6 @@ html {
   position: absolute;
   width: 100%;
   bottom: 0;
-
 }
 
 #id_text {

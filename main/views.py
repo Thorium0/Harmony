@@ -50,7 +50,9 @@ def update(request, loaded_on, user_id):
         friend_user = User.objects.get(id=user_id)
         messages = getMessagesFromUser(request, friend_user, time=loaded_on)
         for message in messages:
-            message_list.append({"username": friend_user.username, "image_url": friend_user.profile.image.url, "message_text": message.text, "sent_on": message.sent_on})
+            short_name = message.file.name.replace("files/", "")
+            message_list.append({"username": friend_user.username, "image_url": friend_user.profile.image.url, "message_text": message.text, "sent_on": message.sent_on, "file_path": message.file.url, "file_name": short_name})
+            
     
     data["messages"] = message_list
     data["new_time"] = str(datetime.datetime.now())
@@ -94,7 +96,7 @@ def friend_select(request, user_id):
     text_messages = []
 
     if request.method == 'POST':
-        form = MessageForm(request.POST)
+        form = MessageForm(request.POST, request.FILES)
 
         if form.is_valid():
             message = form.save(commit=False)
@@ -123,6 +125,7 @@ def friend_select(request, user_id):
                 msg.sent_on = msg.sent_on.strftime("%b %#dth %Y, %H:%M:%S")
             else:
                 msg.sent_on = msg.sent_on.strftime("%b %-dth %Y, %H:%M:%S")
+            msg.file.short_name = msg.file.name.replace("files/", "")
 
 
     loaded_on = datetime.datetime.now()

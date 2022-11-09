@@ -1,7 +1,7 @@
 {% extends "main/base.html.django" %}
 {% block content %}
 {% load crispy_forms_tags %}
-<div id="sideNav" class="sidenav sidenav-transition">
+<div id="sideNav" class="sidenav transition">
   <h2>{{ title }}</h2>
   <a class="row add_friend" href="{% url 'add_friend' %}">+ Add Friend +</a>
   <div id="request_container">
@@ -17,7 +17,7 @@
   
 </div>
 <div class="content-container" class="fill-page" >
-  <div id="content" class="content content-section fill-page">
+  <div id="content" class="content content-section fill-page transition">
     <span style="font-size:30px;cursor:pointer" onclick="toggleNav()">&#9776;</span>
     <span class="chatbox-user">
     <img class="navImg nav-item rounded-circle mr-0" src="{{ user_info.image_url }}"/>
@@ -30,12 +30,17 @@
           [{{message.sent_on}}]
           ({{message.sender.username}}):
           {{message.text}}
+          {% if message.file %}
+          <a href="{{ message.file.url }}" download>
+            {{ message.file.short_name }}
+          </a>
+          {% endif %}
         </div>
         {% endfor %}
 
     </div>
     <div class="msgBox" style="width: 98%">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       <fieldset class="form-group">
         {{ form|crispy }}
@@ -96,7 +101,9 @@
         if (nav_open != null) {
             if (nav_open == 0) {
                 var sideNav = document.getElementById("sideNav");
-                sideNav.classList.remove("sidenav-transition");
+                var content = document.getElementById("content");
+                sideNav.classList.remove("transition");
+                content.classList.remove("transition");
                 closeNav();
                 window.setTimeout(readdClass, 500);
             }
@@ -119,7 +126,8 @@
 
 
       function readdClass() {
-        sideNav.classList.add("sidenav-transition")
+        sideNav.classList.add("transition")
+        content.classList.add("transition");
       }
 
       function start_timer() {
@@ -152,7 +160,7 @@
             console.log(result["messages"]);
             result["messages"].forEach(message => {
                 var container = $("#message_container");
-                var html = '<div class="message-div"> <img class="navImg nav-item rounded-circle mr-0" src="'+message["image_url"]+'"/> '+ '['+moment(message["sent_on"]).format('MMM Do YYYY, HH:mm:ss')+'] (' + message["username"]+'): '+message["message_text"]+' </div>';
+                var html = '<div class="message-div"> <img class="navImg nav-item rounded-circle mr-0" src="'+message["image_url"]+'"/> '+ '['+moment(message["sent_on"]).format('MMM Do YYYY, HH:mm:ss')+'] (' + message["username"]+'): '+message["message_text"]+'<a href="'+message["file_path"]+'"download> '+message["file_name"]+'</a></div>';
                 container.append(html);
             });
             change_time = true;

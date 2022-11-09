@@ -34,6 +34,7 @@ class Message(models.Model):
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
     text = models.CharField(max_length=200)
     sent_on = models.DateTimeField(auto_now=True)
+    file = models.FileField(upload_to='files/')
 
     def __str__(self):
         return f'{self.sender}: {self.text}'

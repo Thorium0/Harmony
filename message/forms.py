@@ -1,5 +1,4 @@
 from django import forms
-from django.contrib.auth.models import User
 from .models import Friend_request, Message
 
 
@@ -12,6 +11,10 @@ class FriendRequestForm(forms.ModelForm):
 
 
 class MessageForm(forms.ModelForm):
+
+    text = forms.CharField(max_length=200, label=False)
+    file = forms.FileField(required=False, label=False)
+
     class Meta:
         model = Message
-        fields = ['text']
+        fields = ['text', 'file']
