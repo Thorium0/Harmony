@@ -122,6 +122,9 @@
         input.select();
 
 
+        //$("#id_text").emojioneArea();
+
+
       });
 
 
