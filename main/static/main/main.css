@@ -263,7 +263,22 @@ width: calc(100% - 30px);
 }
 
 
-.emojionearea-button {
+#div_id_file {
+  width: 210px;
+}
+
+
+#div_id_text .dep-container {
+  width: 100%;
+}
+
+#div_id_text svg {
+  position: absolute;
   width: 30px;
   height: 30px;
+}
+
+.dep-panel {
+  left: calc(100% - 400px) !important;
+  top: calc(100% - 630px) !important;
 }

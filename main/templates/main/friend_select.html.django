@@ -2,183 +2,196 @@
 {% block content %}
 {% load crispy_forms_tags %}
 <div id="sideNav" class="sidenav transition">
-  <h2>{{ title }}</h2>
-  <a class="row add_friend" href="{% url 'add_friend' %}">+ Add Friend +</a>
-  <div id="request_container">
-  {% for request in requests %}
-  <p class="row flex-container "><img class="navImg nav-item rounded-circle mr-0" src="{{ request.requester.profile.image.url }}"/><b class="sidenav_username">{{ request.requester.username }}</b><a href="{% url 'finalize_friend' request.id %}">&#10004;</a><a href="{% url 'remove_friend_request' request.id %}">&#10060;</a></p>
-  {% endfor %}
-  </div>
-  <div id="friend_container">
-  {% for friend in friends %}
-  <a href="{% url 'friend_select' friend.id %}" class="row"><img class="navImg nav-item rounded-circle mr-0" src="{{ friend.profile.image.url }}"/><b class="sidenav_username">{{ friend.username }}</b></a>
-  {% endfor %}
-  </div>
-  
+	<h2>{{ title }}</h2>
+	<a class="row add_friend" href="{% url 'add_friend' %}">+ Add Friend +</a>
+	<div id="request_container">
+		{% for request in requests %}
+		<p class="row flex-container "><img class="navImg nav-item rounded-circle mr-0"
+				src="{{ request.requester.profile.image.url }}" /><b
+				class="sidenav_username">{{ request.requester.username }}</b><a
+				href="{% url 'finalize_friend' request.id %}">&#10004;</a><a
+				href="{% url 'remove_friend_request' request.id %}">&#10060;</a></p>
+		{% endfor %}
+	</div>
+	<div id="friend_container">
+		{% for friend in friends %}
+		<a href="{% url 'friend_select' friend.id %}" class="row"><img class="navImg nav-item rounded-circle mr-0"
+				src="{{ friend.profile.image.url }}" /><b class="sidenav_username">{{ friend.username }}</b></a>
+		{% endfor %}
+	</div>
+
 </div>
-<div class="content-container" class="fill-page" >
-  <div id="content" class="content content-section fill-page transition">
-    <span style="font-size:30px;cursor:pointer" onclick="toggleNav()">&#9776;</span>
-    <span class="chatbox-user">
-    <img class="navImg nav-item rounded-circle mr-0" src="{{ user_info.image_url }}"/>
-    {{ user_info.username }}
-    </span>
-    <div class="message_container" id="message_container">
-        {% for message in text_messages %}
-        <div class="message-div">
-        <img class="navImg nav-item rounded-circle mr-0" src="{{ message.sender.profile.image.url }}"/>
-          [{{message.sent_on}}]
-          ({{message.sender.username}}):
-          {{message.text}}
-          {% if message.file %}
-          <a href="{{ message.file.url }}" download>
-            {{ message.file.short_name }}
-          </a>
-          {% endif %}
-        </div>
-        {% endfor %}
+<div class="content-container" class="fill-page">
+	<div id="content" class="content content-section fill-page transition">
+		<span style="font-size:30px;cursor:pointer" onclick="toggleNav()">&#9776;</span>
+		<span class="chatbox-user">
+			<img class="navImg nav-item rounded-circle mr-0" src="{{ user_info.image_url }}" />
+			{{ user_info.username }}
+		</span>
+		<div class="message_container" id="message_container">
+			{% for message in text_messages %}
+			<div class="message-div">
+				<img class="navImg nav-item rounded-circle mr-0" src="{{ message.sender.profile.image.url }}" />
+				
+				[{{message.sent_on}}]
+				({{message.sender.username}}):
+				<b>{{message.text}}</b>
+				{% if message.file %}
+				<a href="{{ message.file.url }}" download>
+					{{ message.file.short_name }}
+				</a>
+			
+				{% endif %}
+			</div>
+			{% endfor %}
 
-    </div>
-    <div class="msgBox" style="width: 98%">
-    <form method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
-      <fieldset class="form-group">
-        {{ form|crispy }}
-      </fieldset>
-      <div class="form-group">
-        <button class="btn btn-outline-info" type="submit">Send Message</button>
-      </div>
-    </div>
-    </form>
-  </div>
+		</div>
+		<div class="msgBox" style="width: 98%">
+			<form method="POST" enctype="multipart/form-data">
+				{% csrf_token %}
+				<fieldset class="form-group">
+					{% block extrahead %}
+					{{ form.media }}
+					{% endblock %}
+					{{ form|crispy }}
+				</fieldset>
+				<div class="form-group">
+					<button class="btn btn-outline-info" type="submit">Send Message</button>
+				</div>
+		</div>
+		</form>
+	</div>
 </div>
-    <script type="text/javascript">
+<script type="text/javascript">
+	function toggleNav() {
+		if (sessionStorage.getItem("nav_open") == 1) {
+			closeNav();
+			sessionStorage.setItem("nav_open", 0)
+		} else {
+			openNav();
+			sessionStorage.setItem("nav_open", 1)
+		}
+	}
+
+	function openNav() {
+		document.getElementById("sideNav").style.width = "300px";
+		document.getElementById("main").style.marginLeft = "300px";
+		document.getElementById("content").style.width = "calc(100vw - 350px)";
+	}
+
+	function closeNav() {
+		document.getElementById("sideNav").style.width = "0";
+		document.getElementById("main").style.marginLeft = "0";
+		document.getElementById("content").style.width = "calc(100vw - 50px)";
+	}
+
+	var loaded_on = "";
+
+	$(document).ready(function () {
+		loaded_on = moment("{{ loaded_on }}").format("YYYY-MM-DD_HH:mm:ss.SSS");
+		start_timer()
+
+		var main = $("#main");
+		main.css({
+			"transition": "margin-left .5s",
+			"padding": "25px",
+			"margin-left": "300px"
+		});
+
+		textBox = $("#id_text");
+		textBox.val('');
 
 
 
+		var nav_open = sessionStorage.getItem("nav_open");
+		if (nav_open != null) {
+			if (nav_open == 0) {
+				var sideNav = document.getElementById("sideNav");
+				var content = document.getElementById("content");
+				sideNav.classList.remove("transition");
+				content.classList.remove("transition");
+				closeNav();
+				window.setTimeout(readdClass, 500);
+			}
 
-      function toggleNav() {
-        if (sessionStorage.getItem("nav_open") == 1) {
-          closeNav();
-          sessionStorage.setItem("nav_open", 0)
-        } else {
-          openNav();
-          sessionStorage.setItem("nav_open", 1)
-        }
-      }
-
-      function openNav() {
-        document.getElementById("sideNav").style.width = "300px";
-        document.getElementById("main").style.marginLeft = "300px";
-        document.getElementById("content").style.width = "calc(100vw - 350px)";
-      }
-      
-      function closeNav() {
-        document.getElementById("sideNav").style.width = "0";
-        document.getElementById("main").style.marginLeft= "0";
-        document.getElementById("content").style.width = "calc(100vw - 50px)";
-      }
-
-      var loaded_on = "";
-
-      $(document).ready(function() {
-        loaded_on = moment("{{ loaded_on }}").format("YYYY-MM-DD_HH:mm:ss.SSS");
-        start_timer()
-
-        var main = $("#main");
-        main.css({
-          "transition": "margin-left .5s",
-          "padding": "25px",
-          "margin-left": "300px"
-        });
-
-        textBox = $("#id_text");
-        textBox.val('');
+		} else {
+			sessionStorage.setItem("nav_open", 1);
+		}
 
 
-   
-        var nav_open = sessionStorage.getItem("nav_open");
-        if (nav_open != null) {
-            if (nav_open == 0) {
-                var sideNav = document.getElementById("sideNav");
-                var content = document.getElementById("content");
-                sideNav.classList.remove("transition");
-                content.classList.remove("transition");
-                closeNav();
-                window.setTimeout(readdClass, 500);
-            }
-    
-        } else {
-            sessionStorage.setItem("nav_open", 1);
-        }
+		var message_container = document.getElementById("message_container");
+		message_container.scrollTop = message_container.scrollHeight;
 
+		var input = document.getElementById("id_text");
+		input.focus();
+		input.select();
+	});
 
-        var message_container = document.getElementById("message_container");
-        message_container.scrollTop = message_container.scrollHeight;
+	function readdClass() {
+		sideNav.classList.add("transition")
+		content.classList.add("transition");
+	}
 
+	function start_timer() {
+		window.setInterval(async_refresh, 2000);
+	}
 
-        var input = document.getElementById("id_text");
-        input.focus();
-        input.select();
+	seconds = 0;
 
+	function async_refresh() {
+		var user_id = {{ user_id }};
+		$.ajax({
+			url: "update/" + loaded_on + "/" + user_id,
+			success: function (result) {
+				change_time = false;
+				if (result["friend_requests"].length > 0) {
+					result["friend_requests"].forEach(request => {
+						var container = $("#request_container");
+						var html =
+							'<p class="row flex-container "><img class="navImg nav-item rounded-circle mr-0" src="' +
+							request["image_url"] + '"/><b class="sidenav_username">' + 
+								request["username"] + '</b><a href="/friend/finalize/' + 
+								request["request_id"] + '">&#10004;</a><a href="/friend/remove_request/' + 
+								request["request_id"] + '">&#10060;</a></p>';
+						container.append(html);
+					});
+					change_time = true;
+				}
+				if (result["friends"].length > 0) {
+					result["friends"].forEach(friend => {
+						var container = $("#friend_container");
+						var html = '<a href="/' + friend["user_id"] +
+							'" class="row"><img class="navImg nav-item rounded-circle mr-0" src="' +
+							friend["image_url"] + '"/><b class="sidenav_username">' + 
+								friend["username"] + '</b></a>';
+						container.append(html);
+					});
+					change_time = true;
+				}
+				if (result["messages"].length > 0) {
+					console.log(result["messages"]);
+					result["messages"].forEach(message => {
+						var container = $("#message_container");
+						var html =
+							'<div class="message-div"> <img class="navImg nav-item rounded-circle mr-0" src="' +
+							message["image_url"] + '"/> ' + '[' + moment(message["sent_on"]).format(
+								'MMM Do YYYY, HH:mm:ss') + '] (' + message["username"] + '): ' +
+							message["message_text"] + '<a href="' + message["file_path"] +
+							'"download> ' + message["file_name"] + '</a></div>';
+						container.append(html);
+					});
+					change_time = true;
+					var message_container = document.getElementById("message_container");
+					message_container.scrollTop = message_container.scrollHeight;
 
-        //$("#id_text").emojioneArea();
+				}
 
+				if (change_time == true) {
+					loaded_on = moment(result["new_time"]).format("YYYY-MM-DD_HH:mm:ss.SSS");
+				}
 
-      });
-
-
-      function readdClass() {
-        sideNav.classList.add("transition")
-        content.classList.add("transition");
-      }
-
-      function start_timer() {
-        window.setInterval(async_refresh, 2000);
-      }
-
-      seconds = 0;
-
-      function async_refresh() {
-        var user_id = {{ user_id }};
-        $.ajax({url: "update/"+loaded_on+"/"+user_id, success: function(result) {
-          change_time = false;
-          if (result["friend_requests"].length > 0) {
-            result["friend_requests"].forEach(request => {
-              var container = $("#request_container");
-              var html = '<p class="row flex-container "><img class="navImg nav-item rounded-circle mr-0" src="'+request["image_url"]+'"/><b class="sidenav_username">'+request["username"]+'</b><a href="/friend/finalize/'+request["request_id"]+'">&#10004;</a><a href="/friend/remove_request/'+request["request_id"]+'">&#10060;</a></p>';
-              container.append(html);
-            });
-            change_time = true;
-          }
-          if (result["friends"].length > 0) {
-            result["friends"].forEach(friend => {
-              var container = $("#friend_container");
-              var html = '<a href="/'+friend["user_id"]+'" class="row"><img class="navImg nav-item rounded-circle mr-0" src="'+friend["image_url"]+'"/><b class="sidenav_username">'+friend["username"]+'</b></a>';
-              container.append(html);
-            });
-            change_time = true;
-          }
-          if (result["messages"].length > 0) {
-            console.log(result["messages"]);
-            result["messages"].forEach(message => {
-                var container = $("#message_container");
-                var html = '<div class="message-div"> <img class="navImg nav-item rounded-circle mr-0" src="'+message["image_url"]+'"/> '+ '['+moment(message["sent_on"]).format('MMM Do YYYY, HH:mm:ss')+'] (' + message["username"]+'): '+message["message_text"]+'<a href="'+message["file_path"]+'"download> '+message["file_name"]+'</a></div>';
-                container.append(html);
-            });
-            change_time = true;
-            var message_container = document.getElementById("message_container");
-            message_container.scrollTop = message_container.scrollHeight;
-            
-          }
-
-          if (change_time == true) {
-            loaded_on = moment(result["new_time"]).format("YYYY-MM-DD_HH:mm:ss.SSS");
-          }
-
-        }});
-      }
-
-
-    </script>
+			}
+		});
+	}
+</script>
 {% endblock content %}

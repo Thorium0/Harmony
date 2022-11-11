@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'message.apps.MessageConfig',
     'crispy_forms',
     'mobiledetect',
-    'emoji',
+    'emoji_picker',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
