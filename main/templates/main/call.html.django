@@ -4,8 +4,6 @@
 	<div class="content-section fill-page transition">
 	
 
-  
-        <button id="join-btn">Join Stream</button>
 
         <div id="stream-wrapper">
             <div id="video-streams"></div>
@@ -24,13 +22,15 @@
 <script type="text/javascript" src="{% static 'main/js/AgoraRTC_N-4.15.0.js' %}"></script>
 <script type="text/javascript">
 
-
+const USER_ID = "{{user_id}}"
     
 const APP_ID = "{{ app_id }}"
 const TOKEN = "{{ token }}"
 const CHANNEL = "{{ channel_name }}"
 
 let UID = "{{ uid }}"
+
+
 
 console.log(APP_ID)
 console.log(TOKEN)
@@ -63,7 +63,6 @@ let joinAndDisplayLocalStream = async () => {
 
 let joinStream = async () => {
     await joinAndDisplayLocalStream()
-    document.getElementById('join-btn').style.display = 'none'
     document.getElementById('stream-controls').style.display = 'flex'
 }
 
@@ -102,9 +101,10 @@ let leaveAndRemoveLocalStream = async () => {
     }
 
     await client.leave()
-    document.getElementById('join-btn').style.display = 'block'
+
     document.getElementById('stream-controls').style.display = 'none'
     document.getElementById('video-streams').innerHTML = ''
+    window.location.replace("/"+USER_ID)
 }
 
 let toggleMic = async (e) => {
@@ -131,10 +131,16 @@ let toggleCamera = async (e) => {
     }
 }
 
-document.getElementById('join-btn').addEventListener('click', joinStream)
 document.getElementById('leave-btn').addEventListener('click', leaveAndRemoveLocalStream)
 document.getElementById('mic-btn').addEventListener('click', toggleMic)
 document.getElementById('camera-btn').addEventListener('click', toggleCamera)
+
+$(document).ready(function () {
+    joinStream()
+});
+
+
+
 </script>
 
 
