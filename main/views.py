@@ -1,12 +1,12 @@
 from http.client import HTTPResponse
 from django.shortcuts import render, redirect
-from django.core.files.storage import default_storage
 from django.contrib.auth.decorators import login_required
 from message.models import Friend_request, Friend, Message, Conversation
 from message.forms import MessageForm
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-import datetime, sys
+from agora_token_builder import RtcTokenBuilder
+import datetime, sys, random, time
 
 
 
@@ -146,3 +146,38 @@ def friend_select(request, user_id):
     "loaded_on": str(loaded_on)
     }
     return render(request, 'main/friend_select.html.django', context)
+
+
+@login_required
+def call(request, user_id):
+
+
+    friend_user = User.objects.get(id=user_id)
+    try: friend_link = Friend.objects.get(user_1=request.user, user_2=friend_user)
+    except: friend_link = Friend.objects.get(user_2=request.user, user_1=friend_user)
+    
+    conversation = Conversation.objects.get(of_friends=friend_link)
+
+
+    appId = "95c5b44bf3be4174b77904ef6a625ee6"
+    appCertificate = "e56b921b7e3648329e194e0bf9ad0d11"
+    channelName = conversation.__str__().replace(" ","")
+    uid = 0
+    expirationTimeInSeconds = 3600
+    currentTimeStamp = int(time.time())
+    privilegeExpiredTs = currentTimeStamp + expirationTimeInSeconds
+    role = 1
+    token = RtcTokenBuilder.buildTokenWithUid(appId, appCertificate, channelName, uid, role, privilegeExpiredTs)
+
+
+    context = {
+    "title" : "Friends",
+    "user_id": user_id,
+    'token': token, 
+    'app_id': appId,
+    'uid': uid,
+    "channel_name": channelName
+    }
+    return render(request, 'main/call.html.django', context)
+
+

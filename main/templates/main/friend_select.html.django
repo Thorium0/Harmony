@@ -28,6 +28,7 @@
 			<img class="navImg nav-item rounded-circle mr-0" src="{{ user_info.image_url }}" />
 			{{ user_info.username }}
 		</span>
+		<a class="callBtn" href="{% url 'call' user_id %}"><i class="fa fa-phone" style="font-size:36px"></i></a>
 		<div class="message_container" id="message_container">
 			{% for message in text_messages %}
 			<div class="message-div">
@@ -76,7 +77,13 @@
 	function openNav() {
 		document.getElementById("sideNav").style.width = "300px";
 		document.getElementById("main").style.marginLeft = "300px";
-		document.getElementById("content").style.width = "calc(100vw - 350px)";
+
+		if ($(window).width() < 767) {
+			document.getElementById("content").style.width = "150%";
+		} else {
+			document.getElementById("content").style.width = "calc(100vw - 350px)";
+		}
+
 	}
 
 	function closeNav() {
@@ -111,7 +118,7 @@
 				sideNav.classList.remove("transition");
 				content.classList.remove("transition");
 				closeNav();
-				window.setTimeout(readdClass, 500);
+				window.setTimeout(readdTransition, 500);
 			}
 
 		} else {
@@ -127,7 +134,7 @@
 		input.select();
 	});
 
-	function readdClass() {
+	function readdTransition() {
 		sideNav.classList.add("transition")
 		content.classList.add("transition");
 	}
