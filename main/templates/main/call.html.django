@@ -9,9 +9,9 @@
             <div id="video-streams"></div>
     
             <div id="stream-controls">
-                <button id="leave-btn">Leave Stream</button>
-                <button id="mic-btn">Mic On</button>
-                <button id="camera-btn">Camera on</button>
+                <button class="btn btn-outline-info redBtn ml-25" id="leave-btn">Leave Call</button>
+                <button class="btn btn-outline-info" type="button" id="mic-btn">Mic On</button>
+                <button class="btn btn-outline-info" type="button" id="camera-btn">Camera on</button>
             </div>
         </div>
         
@@ -49,7 +49,7 @@ let joinAndDisplayLocalStream = async () => {
     
     let UID = await client.join(APP_ID, CHANNEL, TOKEN, null)
 
-    localTracks = await AgoraRTC.createMicrophoneAndCameraTracks() 
+    localTracks = await AgoraRTC.createMicrophoneAndCameraTracks()
 
     let player = `<div class="video-container" id="user-container-${UID}">
                         <div class="video-player" id="user-${UID}"></div>
@@ -111,11 +111,11 @@ let toggleMic = async (e) => {
     if (localTracks[0].muted){
         await localTracks[0].setMuted(false)
         e.target.innerText = 'Mic on'
-        e.target.style.backgroundColor = 'cadetblue'
+        e.target.classList.remove('redBtn')
     }else{
         await localTracks[0].setMuted(true)
         e.target.innerText = 'Mic off'
-        e.target.style.backgroundColor = '#EE4B2B'
+        e.target.classList.add('redBtn')
     }
 }
 
@@ -123,11 +123,11 @@ let toggleCamera = async (e) => {
     if(localTracks[1].muted){
         await localTracks[1].setMuted(false)
         e.target.innerText = 'Camera on'
-        e.target.style.backgroundColor = 'cadetblue'
+        e.target.classList.remove('redBtn')
     }else{
         await localTracks[1].setMuted(true)
         e.target.innerText = 'Camera off'
-        e.target.style.backgroundColor = '#EE4B2B'
+        e.target.classList.add('redBtn')
     }
 }
 

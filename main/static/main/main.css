@@ -29,9 +29,17 @@ ul {
   width: 40px;
 }
 
+.ml-25 {
+  margin-left: 25px;
+}
+
 .redBtn {
   color:red;
   border-color:red;
+}
+
+.btn {
+  margin-right: 5px;
 }
 
 .redBtn:hover {
@@ -432,8 +440,4 @@ body{
   padding: 10px;
   border-radius: 5px;
 
-}
-
-#leave-btn{
-  background-color: rgb(255, 80, 80, 1);
 }
