@@ -1,10 +1,55 @@
 from django.shortcuts import render, redirect
-
-from message.models import Friend, Friend_request, Message
-from .forms import FriendRequestForm
+from .models import Friend, Friend_request, Server, Server_link, Server_message
+from .forms import FriendRequestForm, ServerMessageForm, JoinServerForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.http import JsonResponse
+import datetime, sys
+
+
+
+def getMessagesFromServer(server, time=False):
+    if time:
+        text_messages = Server_message.objects.filter(server=server, sent_on__gt=time)
+    else:
+        text_messages = Server_message.objects.filter(server=server)
+    return text_messages
+    
+
+
+
+@login_required
+def server_update(request, loaded_on, server_id):
+    data = {}
+    time = datetime.datetime.strptime(loaded_on, "%Y-%m-%d_%H:%M:%S.%f")
+
+
+
+    servers = []
+    message_list = []
+    if server_id != 0:
+        for link in Server_link.objects.filter(user=request.user):
+            server = link.server
+            servers.append({"name":server.name})
+
+    
+        server = Server.objects.get(id=server_id)
+        messages = getMessagesFromServer(request, server, time=loaded_on)
+        for message in messages:
+            short_name = message.file.name.replace("files/", "")
+            message_list.append({"username": message.sender.username, "image_url": message.sender.profile.image.url, "message_text": message.text, "sent_on": message.sent_on, "file_path": message.file.url, "file_name": short_name})
+    
+    
+            
+    data["servers"] = servers
+    data["messages"] = message_list
+    data["new_time"] = str(datetime.datetime.now())
+    return JsonResponse(data)
+
+
+
+
 
 @login_required
 def add_friend(request):
@@ -58,7 +103,7 @@ def add_friend(request):
     else:
         form = FriendRequestForm()
     context = {
-    'title': "Login",
+    'title': "Add friend",
     'form': form
     }
     return render(request, 'message/add_friend.html.django', context)
@@ -101,3 +146,122 @@ def remove_request(request, id):
     except: messages.error(request, "Error removing request")
     
     return redirect('friends')
+
+
+
+
+@login_required
+def join_server(request):
+    if request.method == 'POST':
+        form = JoinServerForm(request.POST)
+
+        if form.is_valid():
+            server_link = form.save(commit=False)
+            server_link.user = request.user
+
+            
+            name = form.cleaned_data.get("name")
+            try: server = Server.objects.get(name=name)
+            except: 
+                Server.objects.create(name=name)
+                server = Server.objects.get(name=name)
+
+            server_link.server = server
+
+
+            try: Server_link.objects.get(server=server, user=request.user)
+            except: pass
+            else: 
+                messages.warning(request, "You are already in this server")
+                return redirect('join_server')
+          
+            
+            try: server_link.save()
+            except: 
+                messages.error(request, "Error")
+            else: 
+                messages.success(request, "Server joined!")
+                return redirect('servers')
+
+
+    else:
+        form = JoinServerForm()
+    context = {
+    'title': "Join server",
+    'form': form
+    }
+    return render(request, 'message/join_server.html.django', context)
+
+
+
+@login_required
+def servers(request):
+    servers = []
+    for link in Server_link.objects.filter(user=request.user):
+        servers.append(link.server)
+
+
+
+    loaded_on = datetime.datetime.now()
+    
+    context = {
+    "title" : "Servers",
+    "servers": servers,
+    "loaded_on": str(loaded_on)
+    }
+    return render(request, 'message/servers.html.django', context)
+
+
+
+
+@login_required
+def server_select(request, server_name):
+    servers = []
+    for link in Server_link.objects.filter(user=request.user):
+        servers.append(link.server)
+
+    
+
+    try: selected_server = Server.objects.get(name=server_name)
+    except: return redirect("servers")
+    text_messages = []
+
+    if request.method == 'POST':
+        form = ServerMessageForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            message = form.save(commit=False)
+
+            message.sender = request.user
+            message.server = selected_server
+
+            form.save()
+            return redirect("server_select", server_name)
+
+    else:
+        form = ServerMessageForm()
+        text_messages = getMessagesFromServer(selected_server)
+        for msg in text_messages:
+            if 'win' in sys.platform:
+                msg.sent_on = msg.sent_on.strftime("%b %#dth %Y, %H:%M:%S")
+            else:
+                msg.sent_on = msg.sent_on.strftime("%b %-dth %Y, %H:%M:%S")
+            msg.file.short_name = msg.file.name.replace("files/", "")
+
+
+    loaded_on = datetime.datetime.now()
+    server_info = {}
+    server_info["name"] = selected_server.username
+    server_info["image_url"] = selected_server.image.url
+    server_info["id"] = selected_server.id
+
+    
+    context = {
+    "title" : "Friends",
+    "servers": servers,
+    "form": form,
+    "text_messages": text_messages,
+    "user_info": server_info,
+    "loaded_on": str(loaded_on)
+    }
+    return render(request, 'main/server_select.html.django', context)

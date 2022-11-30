@@ -5,35 +5,46 @@
   <h2>{{ title }}</h2>
   <a class="row add_friend" href="{% url 'add_friend' %}">+ Add Friend +</a>
   <div id="request_container">
-  {% for request in requests %}
-  <p class="row flex-container "><img class="navImg nav-item rounded-circle mr-0" src="{{ request.requester.profile.image.url }}"/><b class="sidenav_username">{{ request.requester.username }}</b><a href="{% url 'finalize_friend' request.id %}">&#10004;</a><a href="{% url 'remove_friend_request' request.id %}">&#10060;</a></p>
-  {% endfor %}
+    {% for request in requests %}
+    <p class="row flex-container "><img class="navImg nav-item rounded-circle mr-0"
+        src="{{ request.requester.profile.image.url }}" /><b
+        class="sidenav_username">{{ request.requester.username }}</b><a
+        href="{% url 'finalize_friend' request.id %}">&#10004;</a><a
+        href="{% url 'remove_friend_request' request.id %}">&#10060;</a></p>
+    {% endfor %}
   </div>
   <div id="friend_container">
-  {% for friend in friends %}
-  <a href="{% url 'friend_select' friend.id %}" class="row"><img class="navImg nav-item rounded-circle mr-0" src="{{ friend.profile.image.url }}"/><b class="sidenav_username">{{ friend.username }}</b></a>
-  {% endfor %}
+    {% for friend in friends %}
+    <a href="{% url 'friend_select' friend.id %}" class="row"><img class="navImg nav-item rounded-circle mr-0"
+        src="{{ friend.profile.image.url }}" /><b class="sidenav_username">{{ friend.username }}</b></a>
+    {% endfor %}
   </div>
-    <script type="text/javascript">
+  <script type="text/javascript">
+    var loaded_on = "";
 
-      var loaded_on = "";
+    $(document).ready(function () {
+      loaded_on = moment("{{ loaded_on }}").format("YYYY-MM-DD_HH:mm:ss.SSS");
+      start_timer();
+    });
 
-      $(document).ready(function() {
-        loaded_on = moment("{{ loaded_on }}").format("YYYY-MM-DD_HH:mm:ss.SSS");
-        start_timer();
-      });
+    function start_timer() {
+      window.setInterval(async_refresh, 2000);
+    }
 
-      function start_timer() {
-        window.setInterval(async_refresh, 2000);
-      }
-
-      function async_refresh() {
-        $.ajax({url: "update/"+loaded_on+"/0", success: function(result) {
+    function async_refresh() {
+      $.ajax({
+        url: "/update/" + loaded_on + "/0",
+        success: function (result) {
           change_time = false;
           if (result["friend_requests"].length > 0) {
             result["friend_requests"].forEach(request => {
               var container = $("#request_container");
-              var html = '<p class="row flex-container "><img class="navImg nav-item rounded-circle mr-0" src="'+request["image_url"]+'"/><b class="sidenav_username">'+request["username"]+'</b><a href="/friend/finalize/'+request["request_id"]+'">&#10004;</a><a href="/friend/remove_request/'+request["request_id"]+'">&#10060;</a></p>';
+              var html =
+                '<p class="row flex-container "><img class="navImg nav-item rounded-circle mr-0" src="' +
+                request["image_url"] + '"/><b class="sidenav_username">' + request["username"] +
+                '</b><a href="/server/friend/finalize/' + request["request_id"] +
+                '">&#10004;</a><a href="/server/friend/remove_request/' + request["request_id"] +
+                '">&#10060;</a></p>';
               container.append(html);
             });
             change_time = true;
@@ -41,7 +52,9 @@
           if (result["friends"].length > 0) {
             result["friends"].forEach(friend => {
               var container = $("#friend_container");
-              var html = '<a href="/'+friend["user_id"]+'" class="row"><img class="navImg nav-item rounded-circle mr-0" src="'+friend["image_url"]+'"/><b class="sidenav_username">'+friend["username"]+'</b></a>';
+              var html = '<a href="/' + friend["user_id"] +
+                '" class="row"><img class="navImg nav-item rounded-circle mr-0" src="' + friend["image_url"] +
+                '"/><b class="sidenav_username">' + friend["username"] + '</b></a>';
               container.append(html);
             });
             change_time = true;
@@ -50,9 +63,9 @@
           if (change_time == true) {
             loaded_on = moment(result["new_time"]).format("YYYY-MM-DD_HH:mm:ss.SSS");
           }
-        
-        }});
-      }
 
-    </script>
-{% endblock content %}
+        }
+      });
+    }
+  </script>
+  {% endblock content %}

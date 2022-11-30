@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from emoji_picker.widgets import EmojiPickerTextInputAdmin
+from PIL import Image
 
 
 class Friend(models.Model):
@@ -39,3 +39,26 @@ class Message(models.Model):
 
     def __str__(self):
         return f'{self.sender}: {self.text}'
+
+
+
+
+
+class Server(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+
+class Server_link(models.Model):
+    server = models.ForeignKey(Server, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Server_message(models.Model):
+    server = models.ForeignKey(Server, on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.CharField(max_length=200)
+    sent_on = models.DateTimeField(auto_now=True)
+    file = models.FileField(upload_to='files/')
+
+
+
