@@ -9,8 +9,8 @@
             <div id="video-streams"></div>
     
             <div id="stream-controls">
-                <button class="btn btn-outline-info redBtn ml-25" id="leave-btn">Leave Call</button>
-                <button class="btn btn-outline-info" type="button" id="mic-btn">Mic On</button>
+                <button class="btn btn-outline-info redBtn ml-25" id="leave-btn">Leave call</button>
+                <button class="btn btn-outline-info" type="button" id="mic-btn">Mic on</button>
                 <button class="btn btn-outline-info" type="button" id="camera-btn">Camera on</button>
             </div>
         </div>

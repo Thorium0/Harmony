@@ -9,7 +9,6 @@
 		<a href="{% url 'server_select' server.name %}" class="row"><b class="sidenav_username">{{ server.name }}</b></a>
 		{% endfor %}
 	</div>
-
 </div>
 <div class="content-container" class="fill-page">
 	<div id="content" class="content content-section fill-page transition">
@@ -17,7 +16,7 @@
 		<span class="chatbox-user">
 			{{ server_info.name }}
 		</span>
-		<a class="callBtn" href="{% url 'call' server_id %}"><i class="fa fa-phone" style="font-size:36px"></i></a>
+		<a class="callBtn" href="{% url 'server_call' server_info.id %}"><i class="fa fa-phone" style="font-size:36px"></i></a>
 		<div class="message_container" id="message_container">
 			{% for message in text_messages %}
 			<div class="message-div">
@@ -25,11 +24,13 @@
 				
 				[{{message.sent_on}}]
 				({{message.sender.username}}):
-				<b>{{message.text}}</b>
+				<b>
+				{{message.text}}
 				{% if message.file %}
 				<a href="{{ message.file.url }}" download>
 					{{ message.file.short_name }}
 				</a>
+				</b>
 			
 				{% endif %}
 			</div>
@@ -137,31 +138,30 @@
 	function async_refresh() {
 		var server_id = {{ server_info.id }};
 		$.ajax({
-			url: "/update/" + loaded_on + "/" + server_id,
+			url: "/server/update/" + loaded_on + "/" + server_id,
 			success: function (result) {
 				change_time = false;
 
-				if (result["servers"].length > 0) {
-					result["servers"].forEach(server => {
-						var container = $("#server_container");
-						var html = '<a href="/' + server["name"] +
-							'" class="row"><b class="sidenav_username">' + 
-								server["name"] + '</b></a>';
-						container.append(html);
-					});
-					change_time = true;
-				}
 				if (result["messages"].length > 0) {
 					console.log(result["messages"]);
 					result["messages"].forEach(message => {
 						var container = $("#message_container");
+						if (message["file_path"] == null || message["file_name"] == null) {
+							var html =
+							'<div class="message-div"> <img class="navImg nav-item rounded-circle mr-0" src="' +
+							message["image_url"] + '"/> ' + '[' + moment(message["sent_on"]).format(
+								'MMM Do YYYY, HH:mm:ss') + '] (' + message["username"] + '): <b>' +
+							message["message_text"] + '</b></div>';
+						container.append(html);
+						} else {
 						var html =
 							'<div class="message-div"> <img class="navImg nav-item rounded-circle mr-0" src="' +
 							message["image_url"] + '"/> ' + '[' + moment(message["sent_on"]).format(
-								'MMM Do YYYY, HH:mm:ss') + '] (' + message["username"] + '): ' +
+								'MMM Do YYYY, HH:mm:ss') + '] (' + message["username"] + '): <b>' +
 							message["message_text"] + '<a href="' + message["file_path"] +
-							'"download> ' + message["file_name"] + '</a></div>';
+							'"download> ' + message["file_name"] + '</a></b></div>';
 						container.append(html);
+						}
 					});
 					change_time = true;
 					var message_container = document.getElementById("message_container");

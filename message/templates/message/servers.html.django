@@ -9,39 +9,4 @@
     <a href="{% url 'server_select' server.name %}" class="row"><b class="sidenav_username">{{ server.name }}</b></a>
     {% endfor %}
   </div>
-  <script type="text/javascript">
-    var loaded_on = "";
-
-    $(document).ready(function () {
-      loaded_on = moment("{{ loaded_on }}").format("YYYY-MM-DD_HH:mm:ss.SSS");
-      start_timer();
-    });
-
-    function start_timer() {
-      window.setInterval(async_refresh, 2000);
-    }
-
-    function async_refresh() {
-      $.ajax({
-        url: "/update/" + loaded_on + "/0",
-        success: function (result) {
-          change_time = false;
-          if (result["servers"].length > 0) {
-            result["servers"].forEach(friend => {
-              var container = $("#server_container");
-              var html = '<a href="/' + server["name"] +
-                '" class="row">/><b class="sidenav_username">' + server["name"] + '</b></a>';
-              container.append(html);
-            });
-            change_time = true;
-          }
-
-          if (change_time == true) {
-            loaded_on = moment(result["new_time"]).format("YYYY-MM-DD_HH:mm:ss.SSS");
-          }
-
-        }
-      });
-    }
-  </script>
   {% endblock content %}

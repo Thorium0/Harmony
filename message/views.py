@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-import datetime, sys
+from agora_token_builder import RtcTokenBuilder
+import datetime, sys, time
 
 
 
@@ -29,16 +30,15 @@ def server_update(request, loaded_on, server_id):
     servers = []
     message_list = []
     if server_id != 0:
-        for link in Server_link.objects.filter(user=request.user):
-            server = link.server
-            servers.append({"name":server.name})
-
     
         server = Server.objects.get(id=server_id)
-        messages = getMessagesFromServer(request, server, time=loaded_on)
+        messages = getMessagesFromServer(server, time=loaded_on)
         for message in messages:
-            short_name = message.file.name.replace("files/", "")
-            message_list.append({"username": message.sender.username, "image_url": message.sender.profile.image.url, "message_text": message.text, "sent_on": message.sent_on, "file_path": message.file.url, "file_name": short_name})
+            if message.file:
+                short_name = message.file.name.replace("files/", "")
+                message_list.append({"username": message.sender.username, "image_url": message.sender.profile.image.url, "message_text": message.text, "sent_on": message.sent_on, "file_path": message.file.url, "file_name": short_name})
+            else:
+                message_list.append({"username": message.sender.username, "image_url": message.sender.profile.image.url, "message_text": message.text, "sent_on": message.sent_on})
     
     
             
@@ -132,7 +132,7 @@ def finalize_friend(request, id):
         return redirect('friends')
     else: 
         messages.success(request, "Success in adding friend")
-        return redirect('remove_friend_request', id)
+        return redirecjoin_servert('remove_friend_request', id)
 
 
 
@@ -251,17 +251,48 @@ def server_select(request, server_name):
 
     loaded_on = datetime.datetime.now()
     server_info = {}
-    server_info["name"] = selected_server.username
-    server_info["image_url"] = selected_server.image.url
+    server_info["name"] = selected_server.name
     server_info["id"] = selected_server.id
 
     
     context = {
-    "title" : "Friends",
+    "title" : "Servers",
     "servers": servers,
     "form": form,
     "text_messages": text_messages,
-    "user_info": server_info,
+    "server_info": server_info,
     "loaded_on": str(loaded_on)
     }
-    return render(request, 'main/server_select.html.django', context)
+    return render(request, 'message/server_select.html.django', context)
+
+
+
+@login_required
+def server_call(request, server_id):
+
+
+    
+    server = Server.objects.get(id=server_id)
+
+
+    appId = "95c5b44bf3be4174b77904ef6a625ee6"
+    appCertificate = "e56b921b7e3648329e194e0bf9ad0d11"
+    channelName = server.name.__str__().replace(" ","")
+    uid = 0
+    expirationTimeInSeconds = 3600
+    currentTimeStamp = int(time.time())
+    privilegeExpiredTs = currentTimeStamp + expirationTimeInSeconds
+    role = 1
+    token = RtcTokenBuilder.buildTokenWithUid(appId, appCertificate, channelName, uid, role, privilegeExpiredTs)
+
+
+    context = {
+    "title" : "Friends",
+    "user_id": request.user.id,
+    'token': token, 
+    'app_id': appId,
+    'uid': uid,
+    "channel_name": channelName,
+    "server_name": server.name
+    }
+    return render(request, 'message/call_server.html.django', context)

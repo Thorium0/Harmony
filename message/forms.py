@@ -21,7 +21,7 @@ class MessageForm(forms.ModelForm):
 
 
 class JoinServerForm(forms.ModelForm):
-    name = forms.CharField(max_length=50)
+    name = forms.CharField(max_length=50, label="Server name")
     class Meta:
         model = Server_link
         fields = ['name']

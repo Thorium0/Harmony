@@ -49,8 +49,12 @@ def update(request, loaded_on, user_id):
         friend_user = User.objects.get(id=user_id)
         messages = getMessagesFromUser(request, friend_user, time=loaded_on)
         for message in messages:
-            short_name = message.file.name.replace("files/", "")
-            message_list.append({"username": friend_user.username, "image_url": friend_user.profile.image.url, "message_text": message.text, "sent_on": message.sent_on, "file_path": message.file.url, "file_name": short_name})
+            if message.file:
+                short_name = message.file.name.replace("files/", "")
+                message_list.append({"username": friend_user.username, "image_url": friend_user.profile.image.url, "message_text": message.text, "sent_on": message.sent_on, "file_path": message.file.url, "file_name": short_name})
+            else:
+                message_list.append({"username": friend_user.username, "image_url": friend_user.profile.image.url, "message_text": message.text, "sent_on": message.sent_on})
+
             
     
     data["messages"] = message_list
@@ -171,7 +175,7 @@ def call(request, user_id):
 
     context = {
     "title" : "Friends",
-    "user_id": user_id,
+    "user_id": request.user.id,
     'token': token, 
     'app_id': appId,
     'uid': uid,

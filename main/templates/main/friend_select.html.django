@@ -36,12 +36,13 @@
 				
 				[{{message.sent_on}}]
 				({{message.sender.username}}):
-				<b>{{message.text}}</b>
+				<b>
+				{{message.text}}
 				{% if message.file %}
 				<a href="{{ message.file.url }}" download>
 					{{ message.file.short_name }}
 				</a>
-			
+				</b>
 				{% endif %}
 			</div>
 			{% endfor %}
@@ -179,13 +180,23 @@
 					console.log(result["messages"]);
 					result["messages"].forEach(message => {
 						var container = $("#message_container");
-						var html =
+						if (message["file_path"] == null || message["file_name"] == null) {
+							var html =
 							'<div class="message-div"> <img class="navImg nav-item rounded-circle mr-0" src="' +
 							message["image_url"] + '"/> ' + '[' + moment(message["sent_on"]).format(
-								'MMM Do YYYY, HH:mm:ss') + '] (' + message["username"] + '): ' +
+								'MMM Do YYYY, HH:mm:ss') + '] (' + message["username"] + '): <b>' +
+							message["message_text"] + '</b></div>';
+							container.append(html);
+						} else {
+							var html =
+							'<div class="message-div"> <img class="navImg nav-item rounded-circle mr-0" src="' +
+							message["image_url"] + '"/> ' + '[' + moment(message["sent_on"]).format(
+								'MMM Do YYYY, HH:mm:ss') + '] (' + message["username"] + '): <b>' +
 							message["message_text"] + '<a href="' + message["file_path"] +
-							'"download> ' + message["file_name"] + '</a></div>';
-						container.append(html);
+							'"download> ' + message["file_name"] + '</a></b></div>';
+							container.append(html);
+						}
+						
 					});
 					change_time = true;
 					var message_container = document.getElementById("message_container");
