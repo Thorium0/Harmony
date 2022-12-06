@@ -2,7 +2,7 @@
 
 For at sætte projektet op:
 1. Installér Python 3.9 eller nyere: https://www.python.org/downloads/
-2. Installér Python biblioteker med denne kommando: pip install django django-crispy-forms django-mobile-detect mysqlclient pillow pymemcache django-emoji-picker agora_token_builder
+2. Installér Python biblioteker med denne kommando: pip install -r requirements.txt
 3. Gå ind i harmony/settings.py og instil database-indstillinger til hvad du bruger
 4. Lav en fil i root mappen der hedder keys.py og put de sensitite database-informationer i den. Kald variablerne det som er angivet i settings.py
 5. Kør denne kommando for at oprette databasen:  python manage.py migrate
