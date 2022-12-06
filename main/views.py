@@ -122,13 +122,16 @@ def friend_select(request, user_id):
     else:
         form = MessageForm()
         friend_user = User.objects.get(id=user_id)
-        text_messages = getMessagesFromUser(request, friend_user)
-        for msg in text_messages:
-            if 'win' in sys.platform:
-                msg.sent_on = msg.sent_on.strftime("%b %#dth %Y, %H:%M:%S")
-            else:
-                msg.sent_on = msg.sent_on.strftime("%b %-dth %Y, %H:%M:%S")
-            msg.file.short_name = msg.file.name.replace("files/", "")
+        try: text_messages = getMessagesFromUser(request, friend_user)
+        except: pass
+        else:
+            for msg in text_messages:
+                if 'win' in sys.platform:
+                    msg.sent_on = msg.sent_on.strftime("%b %#dth %Y, %H:%M:%S")
+                else:
+                    msg.sent_on = msg.sent_on.strftime("%b %-dth %Y, %H:%M:%S")
+                msg.file.short_name = msg.file.name.replace("files/", "")
+        
 
 
     loaded_on = datetime.datetime.now()
@@ -176,6 +179,7 @@ def call(request, user_id):
     context = {
     "title" : "Friends",
     "user_id": request.user.id,
+    "friend_id": friend_user.id,
     'token': token, 
     'app_id': appId,
     'uid': uid,

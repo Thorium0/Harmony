@@ -23,6 +23,7 @@
 <script type="text/javascript">
 
 const USER_ID = "{{user_id}}"
+const friend_id = "{{friend_id}}"
     
 const APP_ID = "{{ app_id }}"
 const TOKEN = "{{ token }}"
@@ -104,7 +105,7 @@ let leaveAndRemoveLocalStream = async () => {
 
     document.getElementById('stream-controls').style.display = 'none'
     document.getElementById('video-streams').innerHTML = ''
-    window.location.replace("/"+USER_ID)
+    window.location.replace("/friend/"+friend_id)
 }
 
 let toggleMic = async (e) => {

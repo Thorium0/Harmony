@@ -1,3 +1,4 @@
 keys.py
 media/files
 media/profile_pics
+*.pyc

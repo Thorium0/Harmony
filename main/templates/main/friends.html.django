@@ -52,7 +52,7 @@
           if (result["friends"].length > 0) {
             result["friends"].forEach(friend => {
               var container = $("#friend_container");
-              var html = '<a href="/' + friend["user_id"] +
+              var html = '<a href="/friend/' + friend["user_id"] +
                 '" class="row"><img class="navImg nav-item rounded-circle mr-0" src="' + friend["image_url"] +
                 '"/><b class="sidenav_username">' + friend["username"] + '</b></a>';
               container.append(html);
