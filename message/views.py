@@ -132,7 +132,7 @@ def finalize_friend(request, id):
         return redirect('friends')
     else: 
         messages.success(request, "Success in adding friend")
-        return redirecjoin_servert('remove_friend_request', id)
+        return redirect('remove_friend_request', id)
 
 
 

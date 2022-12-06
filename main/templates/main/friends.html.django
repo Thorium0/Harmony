@@ -9,7 +9,7 @@
     <p class="row flex-container "><img class="navImg nav-item rounded-circle mr-0"
         src="{{ request.requester.profile.image.url }}" /><b
         class="sidenav_username">{{ request.requester.username }}</b><a
-        href="{% url 'finalize_friend' request.id %}">&#10004;</a><a
+        href="{% url 'finalize_friend' request.id %}">&#128504;</a> - <a
         href="{% url 'remove_friend_request' request.id %}">&#10060;</a></p>
     {% endfor %}
   </div>
@@ -42,8 +42,8 @@
               var html =
                 '<p class="row flex-container "><img class="navImg nav-item rounded-circle mr-0" src="' +
                 request["image_url"] + '"/><b class="sidenav_username">' + request["username"] +
-                '</b><a href="/server/friend/finalize/' + request["request_id"] +
-                '">&#10004;</a><a href="/server/friend/remove_request/' + request["request_id"] +
+                '</b><a href="/friend/finalize/' + request["request_id"] +
+                '">&#128504;</a> - <a href="/friend/remove_request/' + request["request_id"] +
                 '">&#10060;</a></p>';
               container.append(html);
             });

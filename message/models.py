@@ -9,7 +9,7 @@ class Friend(models.Model):
     created_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.user_1.username} - {self.user_2.username}'
+        return f'({self.id}) {self.user_1.username} - {self.user_2.username}'
 
 
 class Friend_request(models.Model):
@@ -18,7 +18,7 @@ class Friend_request(models.Model):
     sent_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.requester.username} > {self.requested.username}'
+        return f'({self.id}) {self.requester.username} > {self.requested.username}'
     
 
 
@@ -38,7 +38,7 @@ class Message(models.Model):
     file = models.FileField(upload_to='files/')
 
     def __str__(self):
-        return f'{self.sender}: {self.text}'
+        return f'({self.id}) {self.sender}: {self.text}'
 
 
 
@@ -47,6 +47,8 @@ class Message(models.Model):
 class Server(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
+    def __str__(self):
+        return f'({self.id}) {self.name}'
 
 class Server_link(models.Model):
     server = models.ForeignKey(Server, on_delete=models.CASCADE)
@@ -60,5 +62,5 @@ class Server_message(models.Model):
     sent_on = models.DateTimeField(auto_now=True)
     file = models.FileField(upload_to='files/')
 
-
-
+    def __str__(self):
+        return f'({self.id}) {self.server.name} - {self.sender}: {self.text}'
