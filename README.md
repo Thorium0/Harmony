@@ -13,3 +13,11 @@ For at oprette den første administrator-bruger:
 2. Skriv python manage.py createsuperuser
 3. Udfyld de angivne fælter
 4. Du kan nu logge ind med den nye bruger
+
+
+Hvis du har skrevet din kode forkert for mange gange og er blevet kåst ud, så kan du låse om igen med denne kommando:
+python manage.py axes_reset
+Eller for en bestemt ip:
+python manage.py axes_reset_ip [ip ...]
+Eller for en bestemt bruger:
+python manage.py axes_reset_username [username ...]

@@ -6,3 +6,4 @@ pillow
 pymemcache 
 django-emoji-picker 
 agora_token_builder
+django-axes

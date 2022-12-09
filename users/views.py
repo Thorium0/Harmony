@@ -6,6 +6,7 @@ from django.contrib.auth import logout as DjangoLogout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 
@@ -38,13 +39,18 @@ def login(request):
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
 
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            user = User.objects.get(username=username)
+        username = form.data["username"]
+        password = form.data["password"]
+        user = authenticate(
+            request=request,
+            username=username,
+            password=password
+        )
+        if user is not None:
             UserLogin(request, user)
-            try: next_page = request.GET['next']
-            except: return redirect('friends')
-            else: return HttpResponseRedirect(next_page)
+        try: next_page = request.GET['next']
+        except: return redirect('home')
+        else: return HttpResponseRedirect(next_page)
 
     else:
         form = AuthenticationForm()
