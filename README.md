@@ -15,7 +15,7 @@ For at oprette den første administrator-bruger:
 4. Du kan nu logge ind med den nye bruger
 
 
-Hvis du har skrevet din kode forkert for mange gange og er blevet kåst ud, så kan du låse om igen med denne kommando:
+Hvis du har skrevet din kode forkert for mange gange og er blevet låst ud, så kan du låse om igen med denne kommando:
 python manage.py axes_reset
 Eller for en bestemt ip:
 python manage.py axes_reset_ip [ip ...]
