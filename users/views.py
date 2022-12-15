@@ -18,7 +18,15 @@ def register(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
-            user = User.objects.get(username=username)
+
+            username = form.data["username"]
+            password = form.data["password1"]
+            user = authenticate(
+            request=request,
+            username=username,
+            password=password
+        )
+            
             UserLogin(request, user)
             messages.success(request, f'Account "{username}" Created Successfully!')
             try: next_page = request.GET['next']
@@ -49,7 +57,7 @@ def login(request):
         if user is not None:
             UserLogin(request, user)
         try: next_page = request.GET['next']
-        except: return redirect('home')
+        except: return redirect('friends')
         else: return HttpResponseRedirect(next_page)
 
     else:
